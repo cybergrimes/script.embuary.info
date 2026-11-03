@@ -16,8 +16,12 @@ import arrow
 import sys
 import simplecache
 import hashlib
+import requests
 
 ########################
+
+# Shared session for keep-alive connections to TMDB/OMDb/Trakt/YouTube
+SESSION = requests.Session()
 
 ADDON = xbmcaddon.Addon()
 ADDON_ID = ADDON.getAddonInfo('id')
@@ -165,13 +169,12 @@ def date_year(value):
         return value
 
     try:
-        year = str(arrow.get(value).year)
+        return str(arrow.get(value).year)
 
     except Exception:
-        pass
+        return value
 
-    return year
-    
+
 def date_format(value,date='short'):
     if not value:
         return value
@@ -275,13 +278,6 @@ def json_call(method,properties=None,sort=None,query_filter=None,limit=None,para
     json_string = json.dumps(json_string)
 
     result = xbmc.executeJSONRPC(json_string)
-
-    ''' Python 2 compatibility
-    '''
-    try:
-        result = unicode(result, 'utf-8', errors='ignore')
-    except NameError:
-        pass
 
     return json.loads(result)
 

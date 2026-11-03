@@ -281,7 +281,16 @@ class TMDBVideos(object):
             '''
             online_videos = []
             for item in videos:
-                request = requests.head('https://img.youtube.com/vi/%s/0.jpg' % str(item['key']))
+                if item.get('site') != 'YouTube':
+                    continue
+
+                try:
+                    request = SESSION.head('https://img.youtube.com/vi/%s/0.jpg' % str(item['key']), timeout=5)
+                except Exception as error:
+                    log('YouTube thumbnail check failed for %s: %s (keeping video)' % (item.get('key'), error))
+                    online_videos.append(item)
+                    continue
+
                 if request.status_code == requests.codes.ok:
                     online_videos.append(item)
 

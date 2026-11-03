@@ -25,9 +25,12 @@ def trakt_api(call=None):
 
     for i in range(1,4): # loop if heavy server load
         try:
-            request = requests.get(request_url, timeout=5, headers=headers)
+            request = SESSION.get(request_url, timeout=5, headers=headers)
 
             if not request.ok:
+                if 400 <= request.status_code < 500:
+                    log('Trakt client error: Code %s (not retrying)' % request.status_code, ERROR)
+                    return
                 raise Exception(str(request.status_code))
 
         except Exception as error:

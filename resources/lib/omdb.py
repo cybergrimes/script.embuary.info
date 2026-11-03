@@ -5,7 +5,7 @@
 
 import json
 import sys
-import requests
+from urllib.parse import quote
 import xml.etree.ElementTree as ET
 
 from resources.lib.helper import *
@@ -16,6 +16,17 @@ OMDB_API_KEY = ADDON.getSettingString('omdb_api_key')
 
 ########################
 
+def omdb_dvd_date(value):
+    if not value:
+        return value
+
+    try:
+        return arrow.get(value, 'DD MMM YYYY').strftime(xbmc.getRegion('datelong'))
+
+    except Exception:
+        return value
+
+
 def omdb_api(imdbnumber=None,title=None,year=None,content_type=None):
     if imdbnumber:
         url = 'http://www.omdbapi.com/?apikey=%s&i=%s&plot=short&r=xml&tomatoes=true' % (OMDB_API_KEY, imdbnumber)
@@ -23,7 +34,7 @@ def omdb_api(imdbnumber=None,title=None,year=None,content_type=None):
     elif title and year and content_type:
         # urllib has issues with some asian letters
         try:
-            title = urllib.quote(title)
+            title = quote(title)
         except KeyError:
             return
 
@@ -41,9 +52,12 @@ def omdb_api(imdbnumber=None,title=None,year=None,content_type=None):
 
         for i in range(1,4): # loop if heavy server load
             try:
-                request = requests.get(url, timeout=5)
+                request = SESSION.get(url, timeout=5)
 
                 if not request.ok:
+                    if 400 <= request.status_code < 500:
+                        log('OMDB client error: Code %s (not retrying)' % request.status_code)
+                        break
                     raise Exception(str(request.status_code))
 
                 result = request.text
@@ -71,7 +85,7 @@ def omdb_api(imdbnumber=None,title=None,year=None,content_type=None):
 
                     # other
                     omdb['awards'] = child.get('awards', '').replace('N/A', '')
-                    omdb['DVD'] = date_format(child.get('DVD', '').replace('N/A', ''), scheme='DD MMM YYYY')
+                    omdb['DVD'] = omdb_dvd_date(child.get('DVD', '').replace('N/A', ''))
 
             except Exception as error:
                 log('OMDB Error: %s' % error)
