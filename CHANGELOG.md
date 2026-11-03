@@ -2,7 +2,7 @@
 
 Embuary Info (`script.embuary.info`) was created by **sualfred**
 (https://github.com/sualfred/script.embuary.info) and is licensed under
-**Apache-2.0** (unchanged). This is a fork maintained by **Cybergrimes**
+**Apache-2.0** (unchanged). This is a fork maintained by **cybergrimes**
 (https://github.com/cybergrimes/script.embuary.info) targeting Kodi 21 Omega.
 
 ## 2.0.9 (fork; based on upstream `matrix` 2.0.10)
@@ -16,7 +16,7 @@ Not yet tested in a Kodi runtime. No language files or strings.po were touched. 
 - **YouTube thumbnail check** (`resources/lib/video.py`): only YouTube videos are checked (others were dropped later anyway), 5 s timeout, and a failed check logs and keeps the video instead of raising.
 - **`date_year` fix** (`resources/lib/helper.py`): returned an unbound variable (UnboundLocalError) on unparsable dates; now returns the input value, like `date_format`.
 - **Removed dead Python 2 code** (`resources/lib/helper.py`): `unicode()` conversion in `json_call`.
-- **Metadata** (`addon.xml`): version 2.0.9, provider credits sualfred and the Cybergrimes fork, `<source>` points to the fork, `<news>` added. License Apache-2.0 kept.
+- **Metadata** (`addon.xml`): version 2.0.9, provider credits sualfred and the cybergrimes fork, `<source>` points to the fork, `<news>` added. License Apache-2.0 kept.
 - **Added** this `CHANGELOG.md`.
 
 ### Deferred candidates (not implemented; need owner's OK)
